@@ -1,75 +1,2343 @@
-```html
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khám Phá Thiên Nhiên Việt Nam</title>
-</head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALORANT — Bắn súng chiến thuật · FPS · Riot Games</title>
+  <meta name="description" content="VALORANT — tựa game bắn súng chiến thuật góc nhìn thứ nhất kết hợp kỹ năng do Riot Games phát triển." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" />
+  <style>
+    /* ============================================================
+       TOKENS – VALORANT Theme (Đỏ - Trắng)
+       ============================================================ */
+    :root {
+      --bg: #0a0a0a;
+      --bg-soft: #141414;
+      --bg-light: #1a1a1a;
+      --bg-card: #111111;
+      --text: #ffffff;
+      --text-soft: rgba(255, 255, 255, 0.7);
+      --text-mute: rgba(255, 255, 255, 0.4);
+      --line: rgba(255, 255, 255, 0.08);
+      --red: #ff4655;
+      --red-dark: #cc3a47;
+      --red-glow: rgba(255, 70, 85, 0.3);
+      --red-glow-strong: rgba(255, 70, 85, 0.5);
+      --white: #ffffff;
+      --ease-quiet: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-precise: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: auto;
+    }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-weight: 400;
+      line-height: 1.55;
+      -webkit-tap-highlight-color: transparent;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      background: none;
+      border: none;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+    }
+    ::selection {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    /* ============================================================
+       CUSTOM CURSOR
+       ============================================================ */
+    .cursor-dot,
+    .cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 10000;
+      mix-blend-mode: difference;
+      will-change: transform;
+      opacity: 0;
+      transition: opacity .3s ease;
+    }
+    .cursor-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--red);
+      border-radius: 50%;
+    }
+    .cursor-ring {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid rgba(255, 70, 85, 0.8);
+      border-radius: 50%;
+      transition: width .35s var(--ease-quiet), height .35s var(--ease-quiet), opacity .3s ease;
+    }
+    .cursor-ring.is-hover {
+      width: 56px;
+      height: 56px;
+      border-color: var(--red);
+      border-width: 2px;
+    }
+    .cursor-dot.is-visible,
+    .cursor-ring.is-visible {
+      opacity: 1;
+    }
+    html.has-cursor body,
+    html.has-cursor a,
+    html.has-cursor button {
+      cursor: none;
+    }
+    @media (pointer: coarse) {
+      .cursor-dot,
+      .cursor-ring {
+        display: none !important;
+      }
+    }
+
+    /* ============================================================
+       SCROLL PROGRESS
+       ============================================================ */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
+      background: var(--red);
+      z-index: 9999;
+      transition: width 0.08s linear;
+      box-shadow: 0 0 20px var(--red-glow);
+    }
+
+    /* ============================================================
+       NAV
+       ============================================================ */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.2rem 2rem;
+      transition: background .4s var(--ease-quiet), padding .4s var(--ease-quiet), border-color .4s ease;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.is-scrolled {
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      padding: 0.8rem 2rem;
+      border-bottom-color: var(--line);
+    }
+    .nav-inner {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.3rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+    }
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      color: var(--red);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .nav-links a {
+      color: var(--text-soft);
+      transition: color .3s ease;
+      position: relative;
+      padding: 0.3rem 0;
+    }
+    .nav-links a:hover {
+      color: var(--red);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--red);
+      transition: width .4s var(--ease-quiet);
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .nav-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 0.7rem 1.2rem;
+      background: var(--red);
+      color: var(--white);
+      transition: all .35s var(--ease-quiet);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      white-space: nowrap;
+      border: 1px solid var(--red);
+    }
+    .nav-cta:hover {
+      background: transparent;
+      color: var(--red);
+      border-color: var(--red);
+      box-shadow: 0 0 30px var(--red-glow);
+    }
+    .nav-cta::before {
+      content: '◆';
+      font-size: 0.5rem;
+    }
+
+    @media (max-width: 860px) {
+      .nav-links {
+        display: none;
+      }
+      .nav {
+        padding: 0.8rem 1.2rem;
+      }
+      .nav-cta {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.65rem;
+      }
+      .logo {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* ============================================================
+       HERO
+       ============================================================ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 2rem 5rem;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.12);
+      opacity: 0;
+      filter: grayscale(0.9) blur(16px) brightness(0.2) contrast(1.3);
+    }
+    .hero-bg.is-loaded img {
+      transform: scale(1);
+      opacity: 1;
+      filter: grayscale(0.7) contrast(1.4) brightness(0.25);
+      transition: transform 2.4s var(--ease-emphasis), opacity 2.4s var(--ease-emphasis), filter 2.4s var(--ease-emphasis);
+    }
+    .hero-grid-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background-image:
+        linear-gradient(rgba(255, 70, 85, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 70, 85, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 70% at center, black 20%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at center, black 20%, transparent 80%);
+      pointer-events: none;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 30%, transparent 0%, rgba(10, 10, 10, 0.8) 80%),
+        linear-gradient(180deg, rgba(10, 10, 10, 0.7) 0%, transparent 25%, transparent 50%, rgba(10, 10, 10, 0.95) 100%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 1500px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 600;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 36px;
+      height: 2px;
+      background: var(--red);
+    }
+    .hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(4.5rem, 18vw, 16rem);
+      line-height: 0.82;
+      letter-spacing: -0.04em;
+      margin-bottom: 2.5rem;
+      background: linear-gradient(180deg, #ffffff 0%, #ffffff 40%, var(--red) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      text-shadow: 0 0 80px rgba(255, 70, 85, 0.15);
+    }
+    .hero-sub {
+      max-width: 680px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text-soft);
+      margin-bottom: 3rem;
+      font-weight: 400;
+    }
+    .hero-cta-row {
+      display: flex;
+      gap: 1rem;
+      align-items: stretch;
+      flex-wrap: wrap;
+      margin-bottom: 5rem;
+    }
+    .cta-primary {
+      display: flex;
+      align-items: stretch;
+      background: var(--red);
+      color: var(--white);
+      transition: all .4s var(--ease-quiet);
+      border: 1px solid var(--red);
+    }
+    .cta-primary:hover {
+      background: transparent;
+      color: var(--red);
+      box-shadow: 0 0 40px var(--red-glow);
+    }
+    .cta-primary .cta-ip {
+      padding: 1.1rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      transition: border-color .4s ease;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+    }
+    .cta-primary:hover .cta-ip {
+      border-right-color: rgba(255, 70, 85, 0.2);
+    }
+    .cta-primary .cta-copy {
+      padding: 1.1rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .cta-primary .cta-copy::before {
+      content: '◇';
+      font-size: 0.6rem;
+    }
+    .cta-primary.is-copied .cta-copy::before {
+      content: '✓';
+    }
+    .cta-secondary {
+      padding: 1.1rem 1.5rem;
+      border: 1px solid var(--line);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      transition: all .3s var(--ease-quiet);
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+    .cta-secondary:hover {
+      color: var(--red);
+      border-color: var(--red);
+    }
+    .hero-meta {
+      display: flex;
+      gap: 4rem;
+      flex-wrap: wrap;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+      max-width: 750px;
+    }
+    .hero-meta>div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .meta-num {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--white);
+    }
+    .meta-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      font-weight: 500;
+    }
+    .meta-live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0 0 16px var(--red-glow);
+    }
+    .meta-live-dot::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border: 1.5px solid rgba(255, 70, 85, 0.3);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 2.5s linear infinite;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      pointer-events: none;
+      font-weight: 500;
+    }
+    .hero-scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 32px;
+      background: linear-gradient(180deg, var(--red) 0%, transparent 100%);
+      animation: scrollHint 2s var(--ease-quiet) infinite;
+    }
+    @keyframes scrollHint {
+      0% {
+        transform: scaleY(0);
+        transform-origin: top;
+        opacity: 1;
+      }
+      50% {
+        transform: scaleY(1);
+        transform-origin: top;
+        opacity: 1;
+      }
+      51% {
+        transform: scaleY(1);
+        transform-origin: bottom;
+      }
+      100% {
+        transform: scaleY(0);
+        transform-origin: bottom;
+        opacity: 0;
+      }
+    }
+
+    .hero-eyebrow,
+    .hero-title,
+    .hero-sub,
+    .hero-cta-row,
+    .hero-meta,
+    .hero-scroll-hint {
+      opacity: 0;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding: 7rem 1.3rem 3rem;
+        min-height: 100svh;
+      }
+      .hero-meta {
+        gap: 2rem;
+      }
+      .meta-num {
+        font-size: 1.2rem;
+      }
+      .hero-sub {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+      }
+      .hero-cta-row {
+        margin-bottom: 3rem;
+      }
+      .cta-primary .cta-ip,
+      .cta-primary .cta-copy,
+      .cta-secondary {
+        padding: 0.85rem 1.1rem;
+        font-size: 0.65rem;
+      }
+      .cta-primary .cta-ip {
+        font-size: 0.8rem;
+      }
+      .hero-scroll-hint {
+        display: none;
+      }
+    }
+
+    /* ============================================================
+       TICKER
+       ============================================================ */
+    .ticker {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 0.8rem 0;
+      overflow: hidden;
+      background: var(--bg-soft);
+      position: relative;
+      z-index: 5;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      animation: tickerScroll 45s linear infinite;
+      font-weight: 500;
+    }
+    .ticker-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 3rem;
+      padding-right: 3rem;
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .ticker-item::before {
+      content: '◆';
+      color: var(--red);
+      font-size: 0.5rem;
+    }
+    .ticker-live {
+      color: var(--red);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .ticker-live::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 14px var(--red-glow);
+    }
+    @keyframes tickerScroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* ============================================================
+       SECTION BASE
+       ============================================================ */
+    section {
+      position: relative;
+    }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 600;
+    }
+    .section-label::before {
+      content: '';
+      width: 28px;
+      height: 2px;
+      background: var(--red);
+    }
+
+    /* ============================================================
+       ABOUT – Giới thiệu game
+       ============================================================ */
+    .about {
+      padding: 9rem 2rem;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+    .sticky-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .sticky-pair .left {
+      position: sticky;
+      top: 7rem;
+      padding-right: 1rem;
+    }
+    .about h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      margin-bottom: 2.5rem;
+      color: var(--white);
+    }
+    .about h2 span {
+      color: var(--red);
+    }
+    .about p {
+      color: var(--text-soft);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 1.4rem;
+      max-width: 540px;
+    }
+    .about p strong {
+      color: var(--red);
+      font-weight: 600;
+    }
+    .about .right {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .frame {
+      position: relative;
+      overflow: hidden;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+      transition: border-color .4s ease;
+    }
+    .frame:hover {
+      border-color: var(--red);
+      box-shadow: 0 0 30px var(--red-glow);
+    }
+    .frame-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .frame-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(0.6) contrast(1.1) brightness(0.6);
+      transition: transform 1.2s var(--ease-quiet), filter .6s ease;
+    }
+    .frame:hover .frame-img-wrap img {
+      transform: scale(1.05);
+      filter: grayscale(0.3) contrast(1.1) brightness(0.8);
+    }
+    .frame .corner {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-color: var(--red);
+      transition: width .4s var(--ease-quiet), height .4s var(--ease-quiet), border-color .4s ease;
+      z-index: 3;
+      opacity: 0.5;
+    }
+    .frame:hover .corner {
+      width: 36px;
+      height: 36px;
+      border-color: var(--red);
+      opacity: 1;
+    }
+    .frame .corner.tl {
+      top: 14px;
+      left: 14px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .frame .corner.tr {
+      top: 14px;
+      right: 14px;
+      border-top: 1px solid;
+      border-right: 1px solid;
+    }
+    .frame .corner.bl {
+      bottom: 14px;
+      left: 14px;
+      border-bottom: 1px solid;
+      border-left: 1px solid;
+    }
+    .frame .corner.br {
+      bottom: 14px;
+      right: 14px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+    .frame-caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+    }
+    .frame-caption span:last-child {
+      color: var(--red);
+    }
+
+    @media (max-width: 900px) {
+      .about {
+        padding: 5rem 1.3rem;
+      }
+      .sticky-pair {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .sticky-pair .left {
+        position: static;
+        padding-right: 0;
+      }
+    }
+
+    /* ============================================================
+       AGENTS – Đặc vụ
+       ============================================================ */
+    .agents {
+      padding: 8rem 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    .agents-header {
+      margin-bottom: 4.5rem;
+      max-width: 760px;
+    }
+    .agents h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      color: var(--white);
+    }
+    .agents h2 span {
+      color: var(--red);
+    }
+    .agents-intro {
+      color: var(--text-soft);
+      font-size: 1rem;
+      line-height: 1.65;
+      margin-top: 1.5rem;
+      max-width: 600px;
+    }
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .agent-card {
+      position: relative;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      transition: border-color .4s var(--ease-quiet), transform .4s var(--ease-quiet), box-shadow .4s ease;
+    }
+    .agent-card:hover {
+      border-color: var(--red);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px var(--red-glow);
+    }
+    .agent-image {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+    .agent-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(0.6) contrast(1.1) brightness(0.5);
+      transition: transform 1.2s var(--ease-quiet), filter .6s ease;
+    }
+    .agent-card:hover .agent-image img {
+      transform: scale(1.06);
+      filter: grayscale(0.3) contrast(1.1) brightness(0.7);
+    }
+    .agent-image .corner {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: var(--red);
+      transition: width .4s var(--ease-quiet), height .4s var(--ease-quiet), border-color .4s ease;
+      z-index: 2;
+      opacity: 0.4;
+    }
+    .agent-card:hover .agent-image .corner {
+      width: 40px;
+      height: 40px;
+      border-color: var(--red);
+      opacity: 1;
+    }
+    .agent-image .corner.tl {
+      top: 14px;
+      left: 14px;
+      border-top: 1.5px solid;
+      border-left: 1.5px solid;
+    }
+    .agent-image .corner.tr {
+      top: 14px;
+      right: 14px;
+      border-top: 1.5px solid;
+      border-right: 1.5px solid;
+    }
+    .agent-image .corner.bl {
+      bottom: 14px;
+      left: 14px;
+      border-bottom: 1.5px solid;
+      border-left: 1.5px solid;
+    }
+    .agent-image .corner.br {
+      bottom: 14px;
+      right: 14px;
+      border-bottom: 1.5px solid;
+      border-right: 1.5px solid;
+    }
+    .agent-content {
+      padding: 1.8rem;
+    }
+    .agent-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+    .agent-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.3rem;
+      line-height: 1;
+    }
+    .agent-origin {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: var(--text-mute);
+      font-weight: 500;
+    }
+
+    @media (max-width: 1100px) {
+      .agents-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .agents {
+        padding: 5rem 1.3rem;
+      }
+      .agents-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============================================================
+       WEAPONS – Vũ khí
+       ============================================================ */
+    .weapons {
+      padding: 8rem 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    .weapons-header {
+      margin-bottom: 4.5rem;
+      max-width: 760px;
+    }
+    .weapons h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      color: var(--white);
+    }
+    .weapons h2 span {
+      color: var(--red);
+    }
+    .weapons-intro {
+      color: var(--text-soft);
+      font-size: 1rem;
+      line-height: 1.65;
+      margin-top: 1.5rem;
+      max-width: 600px;
+    }
+    .weapons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .weapon-card {
+      position: relative;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      padding: 2rem;
+      transition: border-color .4s var(--ease-quiet), transform .4s var(--ease-quiet), box-shadow .4s ease;
+    }
+    .weapon-card:hover {
+      border-color: var(--red);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px var(--red-glow);
+    }
+    .weapon-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--red);
+    }
+    .weapon-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .weapon-desc {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .weapon-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 0.2rem 0.8rem;
+      margin-top: 0.8rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .weapons {
+        padding: 5rem 1.3rem;
+      }
+      .weapons-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      .weapons-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============================================================
+       MODES – Chế độ chơi
+       ============================================================ */
+    .modes {
+      padding: 8rem 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    .modes-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      margin-bottom: 4.5rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .modes-header-left {
+      max-width: 700px;
+    }
+    .modes h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      color: var(--white);
+    }
+    .modes h2 span {
+      color: var(--red);
+    }
+    .modes-intro {
+      max-width: 380px;
+      color: var(--text-soft);
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .mode-card {
+      position: relative;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      padding: 2rem;
+      transition: border-color .4s var(--ease-quiet), transform .4s var(--ease-quiet), box-shadow .4s ease;
+    }
+    .mode-card:hover {
+      border-color: var(--red);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px var(--red-glow);
+    }
+    .mode-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+    .mode-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .mode-desc {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .mode-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 0.2rem 0.8rem;
+      margin-top: 0.8rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1100px) {
+      .modes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .modes {
+        padding: 5rem 1.3rem;
+      }
+      .modes-grid {
+        grid-template-columns: 1fr;
+      }
+      .modes-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* ============================================================
+       FEATURES MARQUEE
+       ============================================================ */
+    .features {
+      padding: 5rem 0;
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-soft);
+      position: relative;
+    }
+    .features-row {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      letter-spacing: -0.035em;
+      line-height: 1;
+      align-items: center;
+    }
+    .features-row.row-1 {
+      animation: marqueeLeft 38s linear infinite;
+      color: var(--white);
+    }
+    .features-row.row-2 {
+      animation: marqueeRight 32s linear infinite;
+      color: var(--text-mute);
+      font-size: clamp(1.8rem, 4.5vw, 4rem);
+      margin-top: 1.5rem;
+    }
+    .features-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 3rem;
+      padding-right: 3rem;
+    }
+    .features-row span::after {
+      content: '◆';
+      font-size: 0.35em;
+      color: var(--red);
+    }
+    @keyframes marqueeLeft {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    @keyframes marqueeRight {
+      0% {
+        transform: translateX(-50%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    /* ============================================================
+       STATS
+       ============================================================ */
+    .stats {
+      padding: 9rem 2rem;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+    .stats-header {
+      margin-bottom: 4.5rem;
+      max-width: 760px;
+    }
+    .stats h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      color: var(--white);
+    }
+    .stats h2 span {
+      color: var(--red);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+    .stat-item {
+      padding: 3rem 2rem;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      position: relative;
+    }
+    .stat-item:last-child {
+      border-right: none;
+    }
+    .stat-num {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 5.5vw, 4.6rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      margin-bottom: 1rem;
+      display: block;
+      color: var(--red);
+    }
+    .stat-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+    .stat-trend {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-mute);
+      margin-top: 0.5rem;
+      letter-spacing: 0.12em;
+      font-weight: 500;
+    }
+    @media (max-width: 768px) {
+      .stats {
+        padding: 5rem 1.3rem;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat-item:nth-child(2) {
+        border-right: none;
+      }
+      .stat-item {
+        padding: 2rem 1.3rem;
+      }
+    }
+
+    /* ============================================================
+       COMMUNITY
+       ============================================================ */
+    .community {
+      padding: 10rem 2rem;
+      background: linear-gradient(180deg, var(--bg) 0%, #1a0a0a 30%, #2a0a0a 60%, #1a0a0a 80%, var(--bg) 100%);
+      color: var(--text);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .community::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 70, 85, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 70, 85, 0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+    }
+    .community-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .community-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: center;
+      font-weight: 600;
+    }
+    .community-eyebrow::before,
+    .community-eyebrow::after {
+      content: '';
+      width: 32px;
+      height: 2px;
+      background: var(--red);
+    }
+    .community h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 5.5vw, 5rem);
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+      margin-bottom: 2rem;
+      color: var(--white);
+    }
+    .community h2 span {
+      color: var(--red);
+    }
+    .community p {
+      color: var(--text-soft);
+      font-size: 1.08rem;
+      line-height: 1.65;
+      margin-bottom: 3rem;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .discord-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 2.5rem;
+      background: var(--red);
+      color: var(--white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition: all .4s var(--ease-quiet);
+      border: 1px solid var(--red);
+      font-weight: 600;
+    }
+    .discord-cta:hover {
+      background: transparent;
+      color: var(--red);
+      border-color: var(--red);
+      box-shadow: 0 0 50px var(--red-glow);
+    }
+    .discord-cta::after {
+      content: '→';
+      transition: transform .4s var(--ease-quiet);
+    }
+    .discord-cta:hover::after {
+      transform: translateX(6px);
+    }
+    .community-meta {
+      margin-top: 4rem;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+    .community-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .community-meta span::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--red-glow);
+    }
+    .community-meta strong {
+      color: var(--white);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+    @media (max-width: 768px) {
+      .community {
+        padding: 6rem 1.3rem;
+      }
+      .community-meta {
+        gap: 1.5rem;
+        flex-direction: column;
+      }
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    footer {
+      padding: 6rem 2rem 2rem;
+      background: var(--bg);
+      border-top: 1px solid var(--line);
+    }
+    .footer-inner {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .footer-brand .logo {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .footer-brand p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 320px;
+      margin-bottom: 2rem;
+    }
+    .footer-ip {
+      display: inline-flex;
+      align-items: stretch;
+      border: 1px solid var(--red);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .footer-ip-addr {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.8rem;
+      border-right: 1px solid var(--red);
+      display: flex;
+      align-items: center;
+      color: var(--white);
+      font-weight: 500;
+    }
+    .footer-ip-btn {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      transition: all .3s ease;
+      font-weight: 600;
+    }
+    .footer-ip-btn:hover {
+      background: var(--red);
+      color: var(--white);
+    }
+    .footer-col h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+    .footer-col ul {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .footer-col a {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+      transition: color .3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .footer-col a::before {
+      content: '→';
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: all .3s var(--ease-quiet);
+      font-size: 0.8em;
+    }
+    .footer-col a:hover {
+      color: var(--red);
+    }
+    .footer-col a:hover::before {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .footer-bottom {
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-weight: 500;
+    }
+    .footer-bottom a:hover {
+      color: var(--red);
+    }
+    @media (max-width: 768px) {
+      footer {
+        padding: 4rem 1.3rem 2rem;
+      }
+      .footer-top {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding-bottom: 3rem;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* ============================================================
+       REDUCED MOTION
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero-bg img {
+        transform: scale(1) !important;
+        opacity: 1 !important;
+        filter: grayscale(0.7) contrast(1.4) brightness(0.25) !important;
+      }
+      .hero-eyebrow,
+      .hero-title,
+      .hero-sub,
+      .hero-cta-row,
+      .hero-meta,
+      .hero-scroll-hint {
+        opacity: 1 !important;
+      }
+    }
+  </style>
+</head>
 <body>
 
-    <header>
-        <h1>Khám Phá Thiên Nhiên Việt Nam</h1>
-    </header>
+  <div class="scroll-progress"></div>
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
 
-    <main>
+  <!-- ============== NAV ============== -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo" data-cursor-hover aria-label="VALORANT home">
+        <svg class="logo-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+          <path d="M12 2 L22 7 L22 17 L12 22 L2 17 L2 7 Z"/>
+          <path d="M12 2 L12 12"/>
+          <path d="M2 7 L12 12 L22 7"/>
+        </svg>
+        VALORANT
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">Giới thiệu</a></li>
+        <li><a href="#agents">Đặc vụ</a></li>
+        <li><a href="#weapons">Vũ khí</a></li>
+        <li><a href="#modes">Chế độ</a></li>
+        <li><a href="#community">Cộng đồng</a></li>
+      </ul>
+      <button class="nav-cta" data-copy="play.valorant.com">play.valorant.com</button>
+    </div>
+  </nav>
 
-        <section>
-            <h2>Những địa điểm nổi tiếng</h2>
+  <!-- ============== HERO ============== -->
+  <section class="hero">
+    <div class="hero-bg" id="heroBg">
+      <img src="https://picsum.photos/seed/valorant-hero/1920/1080" alt="VALORANT Hero">
+    </div>
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow" id="heroEyebrow">RIOT GAMES · BẮN SÚNG CHIẾN THUẬT · FPS</div>
+      <h1 class="hero-title" id="heroTitle">VALORANT</h1>
+      <p class="hero-sub" id="heroSub">
+        Trò chơi bắn súng chiến thuật góc nhìn thứ nhất kết hợp yếu tố kỹ năng. Hai đội 5 đấu 5 luân phiên tấn công và phòng thủ qua nhiều vòng đấu để giành chiến thắng.
+      </p>
+      <div class="hero-cta-row" id="heroCta">
+        <button class="cta-primary" data-copy="play.valorant.com">
+          <span class="cta-ip">play.valorant.com</span>
+          <span class="cta-copy">Sao chép</span>
+        </button>
+        <a href="#about" class="cta-secondary" data-cursor-hover>Khám phá ↓</a>
+      </div>
+      <div class="hero-meta" id="heroMeta">
+        <div>
+          <span class="meta-num">5v5</span>
+          <span class="meta-lbl">Đội hình</span>
+        </div>
+        <div>
+          <span class="meta-num">
+            <span class="meta-live-dot"></span>
+            <span class="player-count">1,847,392</span>
+          </span>
+          <span class="meta-lbl">Đang chơi</span>
+        </div>
+        <div>
+          <span class="meta-num">13</span>
+          <span class="meta-lbl">Vòng thắng</span>
+        </div>
+        <div>
+          <span class="meta-num">24</span>
+          <span class="meta-lbl">Đặc vụ</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">Cuộn để khám phá</div>
+  </section>
 
-            <ul>
-                <li>Vịnh Hạ Long</li>
-                <li>Đà Lạt</li>
-                <li>Phú Quốc</li>
-            </ul>
-        </section>
+  <!-- ============== TICKER ============== -->
+  <section class="ticker">
+    <div class="ticker-track">
+      <div class="ticker-group">
+        <span class="ticker-live">LIVE</span>
+        <span class="ticker-item">Riot Games</span>
+        <span class="ticker-item">Bắn súng chiến thuật</span>
+        <span class="ticker-item">FPS</span>
+        <span class="ticker-item">5v5</span>
+        <span class="ticker-item">24 Đặc vụ</span>
+        <span class="ticker-item">Xếp hạng cạnh tranh</span>
+        <span class="ticker-item">Spike Rush</span>
+        <span class="ticker-item">Esports toàn cầu</span>
+      </div>
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-live">LIVE</span>
+        <span class="ticker-item">Riot Games</span>
+        <span class="ticker-item">Bắn súng chiến thuật</span>
+        <span class="ticker-item">FPS</span>
+        <span class="ticker-item">5v5</span>
+        <span class="ticker-item">24 Đặc vụ</span>
+        <span class="ticker-item">Xếp hạng cạnh tranh</span>
+        <span class="ticker-item">Spike Rush</span>
+        <span class="ticker-item">Esports toàn cầu</span>
+      </div>
+    </div>
+  </section>
 
-        <section>
-            <h2>Hình ảnh thiên nhiên</h2>
+  <!-- ============== ABOUT ============== -->
+  <section class="about" id="about">
+    <div class="sticky-pair">
+      <div class="left">
+        <div class="section-label">01 — Giới thiệu</div>
+        <h2>Chiến thuật. Kỹ năng. <span>Đẳng cấp.</span></h2>
+        <p>
+          <strong>VALORANT</strong> là tựa game bắn súng chiến thuật góc nhìn thứ nhất (FPS) kết hợp yếu tố sử dụng kỹ năng, được phát triển và phát hành bởi <strong>Riot Games</strong>.
+        </p>
+        <p>
+          Hai đội chơi (5 đấu 5) sẽ luân phiên đảm nhận hai phe <strong>Tấn công</strong> và <strong>Phòng thủ</strong>, thi đấu qua nhiều vòng để đạt số hiệp thắng tối đa. Trận đấu tiêu chuẩn diễn ra theo thể thức đội nào đạt <strong>13 vòng thắng</strong> trước sẽ giành chiến thắng chung cuộc.
+        </p>
+        <p>
+          <strong>Phe Tấn công:</strong> Có nhiệm vụ mang Spike (bom) và đặt tại các khu vực được chỉ định trên bản đồ, sau đó bảo vệ nó cho đến khi phát nổ.<br>
+          <strong>Phe Phòng thủ:</strong> Ngăn chặn đối phương đặt Spike hoặc vô hiệu hóa Spike nếu nó đã được đặt.
+        </p>
+        <p>
+          <strong>Kinh tế trong game:</strong> Đầu mỗi vòng, người chơi sử dụng tiền (kiếm được từ việc hạ gục đối thủ, đặt Spike hoặc thắng/thua vòng trước) để mua vũ khí, giáp và kỹ năng.
+        </p>
+      </div>
+      <div class="right">
+        <div class="frame" data-cursor-hover>
+          <div class="frame-img-wrap">
+            <img src="https://picsum.photos/seed/valorant-bind/900/700" alt="Bản đồ Bind">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+          </div>
+          <div class="frame-caption">
+            <span>Bản đồ Bind</span>
+            <span>Hai Teleporter</span>
+          </div>
+        </div>
+        <div class="frame" data-cursor-hover>
+          <div class="frame-img-wrap">
+            <img src="https://picsum.photos/seed/valorant-split/900/600" alt="Bản đồ Split">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+          </div>
+          <div class="frame-caption">
+            <span>Bản đồ Split</span>
+            <span>Khu vực chật hẹp</span>
+          </div>
+        </div>
+        <div class="frame" data-cursor-hover>
+          <div class="frame-img-wrap">
+            <img src="https://picsum.photos/seed/valorant-haven/900/700" alt="Bản đồ Haven">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+          </div>
+          <div class="frame-caption">
+            <span>Bản đồ Haven</span>
+            <span>Ba khu vực đặt Spike</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            <figure>
-                <img
-                    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600"
-                    alt="Biển xanh với bãi cát trắng và bầu trời trong">
-                <figcaption>Bãi biển tuyệt đẹp.</figcaption>
-            </figure>
+  <!-- ============== AGENTS ============== -->
+  <section class="agents" id="agents">
+    <div class="agents-header">
+      <div class="section-label">02 — Đặc vụ</div>
+      <h2>Hóa thân vào những <span>chiến binh</span> đặc biệt</h2>
+      <p class="agents-intro">
+        Mỗi Đặc vụ đến từ một quốc gia khác nhau, sở hữu bộ kỹ năng độc đáo và được chia thành 4 vai trò chiến thuật.
+      </p>
+    </div>
+    <div class="agents-grid">
+      <div class="agent-card" data-cursor-hover>
+        <div class="agent-image">
+          <img src="https://picsum.photos/seed/jett/600/750" alt="Jett">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="agent-content">
+          <div class="agent-role">⚡ Đối đầu (Duelist)</div>
+          <div class="agent-name">Jett</div>
+          <div class="agent-origin">🇰🇷 Hàn Quốc</div>
+        </div>
+      </div>
+      <div class="agent-card" data-cursor-hover>
+        <div class="agent-image">
+          <img src="https://picsum.photos/seed/phoenix/600/750" alt="Phoenix">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="agent-content">
+          <div class="agent-role">⚡ Đối đầu (Duelist)</div>
+          <div class="agent-name">Phoenix</div>
+          <div class="agent-origin">🇬🇧 Anh Quốc</div>
+        </div>
+      </div>
+      <div class="agent-card" data-cursor-hover>
+        <div class="agent-image">
+          <img src="https://picsum.photos/seed/sova/600/750" alt="Sova">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="agent-content">
+          <div class="agent-role">🔍 Khởi xướng (Initiator)</div>
+          <div class="agent-name">Sova</div>
+          <div class="agent-origin">🇷🇺 Nga</div>
+        </div>
+      </div>
+      <div class="agent-card" data-cursor-hover>
+        <div class="agent-image">
+          <img src="https://picsum.photos/seed/brimstone/600/750" alt="Brimstone">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+        </div>
+        <div class="agent-content">
+          <div class="agent-role">💨 Kiểm soát (Controller)</div>
+          <div class="agent-name">Brimstone</div>
+          <div class="agent-origin">🇺🇸 Mỹ</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            <figure>
-                <img
-                    src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600"
-                    alt="Dãy núi phủ mây vào buổi sáng">
-                <figcaption>Khung cảnh núi non hùng vĩ.</figcaption>
-            </figure>
+  <!-- ============== WEAPONS ============== -->
+  <section class="weapons" id="weapons">
+    <div class="weapons-header">
+      <div class="section-label">03 — Vũ khí</div>
+      <h2>Kho vũ khí <span>đa dạng</span></h2>
+      <p class="weapons-intro">
+        Bên cạnh kỹ năng đặc biệt của nhân vật, độ chính xác của những pha đấu súng truyền thống đóng vai trò quyết định.
+      </p>
+    </div>
+    <div class="weapons-grid">
+      <div class="weapon-card" data-cursor-hover>
+        <div class="weapon-icon">🔫</div>
+        <div class="weapon-name">Ghost</div>
+        <div class="weapon-desc">Súng lục yên tĩnh, sát thương cao, lý tưởng trong các vòng đầu.</div>
+        <span class="weapon-tag">Súng lục</span>
+      </div>
+      <div class="weapon-card" data-cursor-hover>
+        <div class="weapon-icon">🎯</div>
+        <div class="weapon-name">Vandal</div>
+        <div class="weapon-desc">Súng trường tấn công với sát thương một phát chí mạng, sức mạnh vượt trội.</div>
+        <span class="weapon-tag">Súng trường</span>
+      </div>
+      <div class="weapon-card" data-cursor-hover>
+        <div class="weapon-icon">🎯</div>
+        <div class="weapon-name">Phantom</div>
+        <div class="weapon-desc">Súng trường ổn định, độ giật thấp, lý tưởng trong các pha đấu súng tầm gần.</div>
+        <span class="weapon-tag">Súng trường</span>
+      </div>
+      <div class="weapon-card" data-cursor-hover>
+        <div class="weapon-icon">🔭</div>
+        <div class="weapon-name">Operator</div>
+        <div class="weapon-desc">Súng ngắm có ống ngắm, tiêu diệt mục tiêu từ xa với sát thương chí mạng.</div>
+        <span class="weapon-tag">Súng ngắm</span>
+      </div>
+      <div class="weapon-card" data-cursor-hover>
+        <div class="weapon-icon">⚡</div>
+        <div class="weapon-name">Sheriff</div>
+        <div class="weapon-desc">Súng lục mạnh mẽ với sát thương đầu cao, yêu cầu kỹ năng ngắm bắn chính xác.</div>
+        <span class="weapon-tag">Súng lục</span>
+      </div>
+      <div class="weapon-card" data-cursor-hover>
+        <div class="weapon-icon">🎯</div>
+        <div class="weapon-name">Guardian</div>
+        <div class="weapon-desc">Súng trường bán tự động với độ chính xác tuyệt đối và khả năng chí mạng.</div>
+        <span class="weapon-tag">Súng trường</span>
+      </div>
+    </div>
+  </section>
 
-            <figure>
-                <img
-                    src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600"
-                    alt="Khu rừng xanh dưới ánh nắng ban ngày">
-                <figcaption>Rừng cây xanh tươi.</figcaption>
-            </figure>
+  <!-- ============== MODES ============== -->
+  <section class="modes" id="modes">
+    <div class="modes-header">
+      <div class="modes-header-left">
+        <div class="section-label">04 — Chế độ chơi</div>
+        <h2>Đa dạng cách chơi <span>cho mọi phong cách</span></h2>
+      </div>
+      <p class="modes-intro">
+        Từ cạnh tranh đến giải trí, VALORANT mang đến nhiều chế độ chơi cho mọi đối tượng.
+      </p>
+    </div>
+    <div class="modes-grid">
+      <div class="mode-card" data-cursor-hover>
+        <div class="mode-icon">⚔️</div>
+        <div class="mode-title">Đấu thường</div>
+        <div class="mode-desc">Chế độ tiêu chuẩn để luyện tập, tìm hiểu bản đồ mà không bị áp lực điểm số.</div>
+        <span class="mode-tag">Unrated</span>
+      </div>
+      <div class="mode-card" data-cursor-hover>
+        <div class="mode-icon">🏆</div>
+        <div class="mode-title">Xếp hạng</div>
+        <div class="mode-desc">Chế độ cạnh tranh căng thẳng từ Sắt (Iron) đến Thách Đấu (Radiant).</div>
+        <span class="mode-tag">Competitive</span>
+      </div>
+      <div class="mode-card" data-cursor-hover>
+        <div class="mode-icon">⚡</div>
+        <div class="mode-title">Tốc chiến</div>
+        <div class="mode-desc">Diễn ra cực nhanh, vũ khí ngẫu nhiên, kéo dài 7-10 phút.</div>
+        <span class="mode-tag">Spike Rush</span>
+      </div>
+      <div class="mode-card" data-cursor-hover>
+        <div class="mode-icon">💀</div>
+        <div class="mode-title">Sinh tử</div>
+        <div class="mode-desc">Không dùng kỹ năng, tập trung 100% vào rèn luyện kỹ năng ngắm bắn.</div>
+        <span class="mode-tag">Deathmatch</span>
+      </div>
+    </div>
+  </section>
 
-        </section>
+  <!-- ============== FEATURES MARQUEE ============== -->
+  <section class="features">
+    <div class="features-row row-1">
+      <span>Bắn súng chiến thuật</span><span>5v5</span><span>Đặc vụ độc đáo</span><span>Spike Rush</span><span>Xếp hạng</span><span>Riot Games</span>
+      <span>Bắn súng chiến thuật</span><span>5v5</span><span>Đặc vụ độc đáo</span><span>Spike Rush</span><span>Xếp hạng</span><span>Riot Games</span>
+    </div>
+    <div class="features-row row-2">
+      <span>Esports toàn cầu</span><span>Champions</span><span>VCT</span><span>24 Đặc vụ</span><span>Bản đồ đa dạng</span>
+      <span>Esports toàn cầu</span><span>Champions</span><span>VCT</span><span>24 Đặc vụ</span><span>Bản đồ đa dạng</span>
+    </div>
+  </section>
 
-        <section>
-            <h2>Tìm hiểu thêm</h2>
+  <!-- ============== STATS ============== -->
+  <section class="stats">
+    <div class="stats-header">
+      <div class="section-label">05 — Thống kê</div>
+      <h2>Valorant <span>toàn cầu</span></h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-num" data-count="25000000">0</span>
+        <span class="stat-lbl">Người chơi hoạt động</span>
+        <div class="stat-trend">+1.2M tháng này</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="24">0</span>
+        <span class="stat-lbl">Đặc vụ</span>
+        <div class="stat-trend">Liên tục cập nhật</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="11">0</span>
+        <span class="stat-lbl">Bản đồ</span>
+        <div class="stat-trend">Mỗi bản đồ độc đáo</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="300">0</span>
+        <span class="stat-lbl">Giải đấu chuyên nghiệp</span>
+        <div class="stat-trend">VCT Champions</div>
+      </div>
+    </div>
+  </section>
 
-            <p>
-                Đọc thêm về Việt Nam tại
-                <a href="https://vi.wikipedia.org/wiki/Vi%E1%BB%87t_Nam" target="_blank">
-                    Wikipedia
-                </a>.
-            </p>
-        </section>
+  <!-- ============== COMMUNITY ============== -->
+  <section class="community" id="community">
+    <div class="community-content">
+      <div class="community-eyebrow">06 — Cộng đồng</div>
+      <h2>Hàng triệu người chơi <span>trên toàn thế giới</span></h2>
+      <p>
+        VALORANT không chỉ là một trò chơi, mà còn là một cộng đồng toàn cầu. Từ các giải đấu chuyên nghiệp VCT đến những pha highlight trên stream, tất cả cùng nhau tạo nên sức hút của tựa game này.
+      </p>
+      <a href="#" class="discord-cta" data-cursor-hover>Tham gia cộng đồng</a>
+      <div class="community-meta">
+        <span><strong>25M+</strong> người chơi</span>
+        <span><strong>1.8M</strong> đang chơi</span>
+        <span><strong>100+</strong> quốc gia</span>
+      </div>
+    </div>
+  </section>
 
-    </main>
+  <!-- ============== FOOTER ============== -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <svg class="logo-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+              <path d="M12 2 L22 7 L22 17 L12 22 L2 17 L2 7 Z"/>
+              <path d="M12 2 L12 12"/>
+              <path d="M2 7 L12 12 L22 7"/>
+            </svg>
+            VALORANT
+          </a>
+          <p>Tựa game bắn súng chiến thuật FPS kết hợp kỹ năng, được phát triển bởi Riot Games.</p>
+          <div class="footer-ip">
+            <span class="footer-ip-addr">play.valorant.com</span>
+            <button class="footer-ip-btn" data-copy="play.valorant.com">Sao chép</button>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Game</h4>
+          <ul>
+            <li><a href="#about">Giới thiệu</a></li>
+            <li><a href="#agents">Đặc vụ</a></li>
+            <li><a href="#weapons">Vũ khí</a></li>
+            <li><a href="#modes">Chế độ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Cộng đồng</h4>
+          <ul>
+            <li><a href="#">Discord</a></li>
+            <li><a href="#">Reddit</a></li>
+            <li><a href="#">Twitter</a></li>
+            <li><a href="#">Youtube</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Hỗ trợ</h4>
+          <ul>
+            <li><a href="#">Trung tâm hỗ trợ</a></li>
+            <li><a href="#">Báo cáo lỗi</a></li>
+            <li><a href="#">Liên hệ</a></li>
+            <li><a href="#">Điều khoản</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2024 VALORANT · Riot Games</div>
+        <div>Made with ❤️ by fans</div>
+      </div>
+    </div>
+  </footer>
 
-    <footer>
-        <p>&copy; 2026 Tuấn Lê</p>
-    </footer>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.13/dist/lenis.min.js"></script>
+  <script>
+    (function() {
+      'use strict';
 
+      const isMobile = window.matchMedia('(pointer: coarse)').matches ||
+        'ontouchstart' in window ||
+        window.innerWidth < 768;
+      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const hasGSAP = typeof window.gsap !== 'undefined';
+      const hasScrollTrigger = typeof window.ScrollTrigger !== 'undefined';
+      const hasLenis = typeof window.Lenis !== 'undefined';
+
+      if (hasScrollTrigger && hasGSAP) gsap.registerPlugin(ScrollTrigger);
+
+      if (!isMobile) document.documentElement.classList.add('has-cursor');
+      document.documentElement.classList.add(isMobile ? 'is-mobile' : 'is-desktop');
+
+      let lenis = null;
+      if (!isMobile && !isReducedMotion && hasLenis) {
+        lenis = new Lenis({
+          duration: 1.15,
+          easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          smoothTouch: false,
+          wheelMultiplier: 1,
+        });
+
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        if (hasGSAP && hasScrollTrigger) {
+          lenis.on('scroll', ScrollTrigger.update);
+          gsap.ticker.add(time => lenis.raf(time * 1000));
+          gsap.ticker.lagSmoothing(0);
+        }
+      }
+
+      if (!isMobile && !isReducedMotion) {
+        const dot = document.querySelector('.cursor-dot');
+        const ring = document.querySelector('.cursor-ring');
+        let mx = 0,
+          my = 0,
+          rx = 0,
+          ry = 0;
+        let visible = false;
+
+        document.addEventListener('mousemove', e => {
+          mx = e.clientX;
+          my = e.clientY;
+          if (!visible) {
+            visible = true;
+            dot.classList.add('is-visible');
+            ring.classList.add('is-visible');
+            rx = mx;
+            ry = my;
+          }
+          dot.style.transform = `translate(${mx - 2}px, ${my - 2}px)`;
+        });
+
+        document.addEventListener('mouseleave', () => {
+          dot.classList.remove('is-visible');
+          ring.classList.remove('is-visible');
+          visible = false;
+        });
+        document.addEventListener('mouseenter', () => {
+          if (!visible) {
+            visible = true;
+            dot.classList.add('is-visible');
+            ring.classList.add('is-visible');
+          }
+        });
+
+        function updateRing() {
+          rx += (mx - rx) * 0.18;
+          ry += (my - ry) * 0.18;
+          ring.style.transform = `translate(${rx - 14}px, ${ry - 14}px)`;
+          requestAnimationFrame(updateRing);
+        }
+        updateRing();
+
+        document.querySelectorAll('a, button, [data-cursor-hover]').forEach(el => {
+          el.addEventListener('mouseenter', () => ring.classList.add('is-hover'));
+          el.addEventListener('mouseleave', () => ring.classList.remove('is-hover'));
+        });
+      }
+
+      const progressEl = document.querySelector('.scroll-progress');
+      const navEl = document.getElementById('nav');
+
+      function onScroll() {
+        const scrolled = window.scrollY;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? Math.min(100, (scrolled / max) * 100) : 0;
+        progressEl.style.width = pct + '%';
+        if (scrolled > 60) navEl.classList.add('is-scrolled');
+        else navEl.classList.remove('is-scrolled');
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', e => {
+          const href = link.getAttribute('href');
+          if (href === '#' || !href) return;
+          const target = document.querySelector(href);
+          if (!target) return;
+          e.preventDefault();
+          if (lenis) lenis.scrollTo(target, { offset: -80, duration: 1.2 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      const heroBg = document.getElementById('heroBg');
+      const heroBgImg = heroBg.querySelector('img');
+
+      function activateHeroBg() {
+        heroBg.classList.add('is-loaded');
+      }
+      if (heroBgImg.complete) activateHeroBg();
+      else heroBgImg.addEventListener('load', activateHeroBg);
+      setTimeout(activateHeroBg, 1500);
+
+      if (hasGSAP && !isReducedMotion) {
+        const tl = gsap.timeline({ delay: 0.35 });
+        tl.fromTo('#heroEyebrow', { opacity: 0, y: -18 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
+          .fromTo('#heroTitle', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1.4, ease: 'power3.out' }, '-=0.4')
+          .fromTo('#heroSub', { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' }, '-=0.75')
+          .fromTo('#heroCta', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.55')
+          .fromTo('#heroMeta', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+          .fromTo('.hero-scroll-hint', { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power2.out' }, '-=0.4');
+      } else {
+        ['#heroEyebrow', '#heroTitle', '#heroSub', '#heroCta', '#heroMeta'].forEach(s => {
+          const el = document.querySelector(s);
+          if (el) { el.style.opacity = '1';
+            el.style.transform = 'none'; }
+        });
+        const hint = document.querySelector('.hero-scroll-hint');
+        if (hint) hint.style.opacity = '1';
+      }
+
+      if (hasGSAP && hasScrollTrigger && !isReducedMotion) {
+        gsap.utils.toArray('.section-label, .about h2, .about p, .agents h2, .agents-intro, .weapons h2, .weapons-intro, .modes h2, .modes-intro, .stats h2, .community h2, .community p')
+          .forEach(el => {
+            gsap.fromTo(el, { opacity: 0, y: 30 }, {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              ease: 'power3.out',
+              scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+            });
+          });
+
+        const dirs = [
+          'inset(0 100% 0 0)',
+          'inset(0 0 100% 0)',
+          'inset(0 0 0 100%)',
+          'inset(100% 0 0 0)',
+        ];
+        document.querySelectorAll('.about .frame').forEach((frame, i) => {
+          const img = frame.querySelector('img');
+          gsap.set(img, { clipPath: dirs[i % dirs.length], scale: 1.25 });
+          ScrollTrigger.create({
+            trigger: frame,
+            start: 'top 85%',
+            once: true,
+            onEnter: () => {
+              gsap.to(img, {
+                clipPath: 'inset(0% 0% 0% 0%)',
+                duration: 1.3,
+                ease: 'power4.inOut',
+                delay: i * 0.12,
+              });
+              gsap.to(img, {
+                scale: 1.03,
+                duration: 1.6,
+                ease: 'power3.out',
+                delay: i * 0.12,
+              });
+              gsap.fromTo(frame.querySelector('.frame-caption'), { opacity: 0, y: 10 }, {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: 'power2.out',
+                delay: i * 0.12 + 0.5
+              });
+            }
+          });
+        });
+
+        document.querySelectorAll('.agent-card, .weapon-card, .mode-card').forEach((card, i) => {
+          const img = card.querySelector('img');
+          if (img) {
+            const dir = dirs[i % dirs.length];
+            gsap.set(img, { clipPath: dir, scale: 1.25 });
+            ScrollTrigger.create({
+              trigger: card,
+              start: 'top 85%',
+              once: true,
+              onEnter: () => {
+                gsap.to(img, {
+                  clipPath: 'inset(0% 0% 0% 0%)',
+                  duration: 1.2,
+                  ease: 'power4.inOut',
+                  delay: i * 0.08,
+                });
+                gsap.to(img, {
+                  scale: 1,
+                  duration: 1.5,
+                  ease: 'power3.out',
+                  delay: i * 0.08,
+                });
+                gsap.fromTo(card.querySelector('.agent-content, .weapon-desc, .mode-desc'), { opacity: 0, y: 15 }, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.7,
+                  ease: 'power2.out',
+                  delay: i * 0.08 + 0.3
+                });
+              }
+            });
+          } else {
+            ScrollTrigger.create({
+              trigger: card,
+              start: 'top 85%',
+              once: true,
+              onEnter: () => {
+                gsap.fromTo(card, { opacity: 0, y: 20 }, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.8,
+                  ease: 'power2.out',
+                  delay: i * 0.08
+                });
+              }
+            });
+          }
+        });
+
+        document.querySelectorAll('.stat-num').forEach(el => {
+          const target = parseInt(el.dataset.count);
+          const format = el.dataset.format;
+          const obj = { val: 0 };
+          ScrollTrigger.create({
+            trigger: el,
+            start: 'top 85%',
+            once: true,
+            onEnter: () => {
+              gsap.to(obj, {
+                val: target,
+                duration: 2.2,
+                ease: 'power2.out',
+                onUpdate: () => {
+                  let v = Math.floor(obj.val);
+                  if (format === 'million') {
+                    el.textContent = (v / 1000000).toFixed(2) + 'M';
+                  } else {
+                    el.textContent = v.toLocaleString();
+                  }
+                }
+              });
+            }
+          });
+        });
+
+        gsap.fromTo('.community-content', { opacity: 0, y: 40 }, {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: '.community', start: 'top 75%', once: true }
+        });
+
+        gsap.fromTo('.footer-top > *', { opacity: 0, y: 20 }, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          stagger: 0.08,
+          scrollTrigger: { trigger: 'footer', start: 'top 90%', once: true }
+        });
+      } else {
+        document.querySelectorAll('.about .frame img, .agent-card img').forEach(img => {
+          img.style.clipPath = 'inset(0 0 0 0)';
+          img.style.transform = 'none';
+          img.style.opacity = '1';
+        });
+      }
+
+      document.querySelectorAll('[data-copy]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const ip = btn.dataset.copy;
+          try {
+            await navigator.clipboard.writeText(ip);
+          } catch (e) {
+            const ta = document.createElement('textarea');
+            ta.value = ip;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (_) {}
+            document.body.removeChild(ta);
+          }
+
+          if (btn.classList.contains('cta-primary')) {
+            const copySpan = btn.querySelector('.cta-copy');
+            const orig = copySpan.textContent;
+            btn.classList.add('is-copied');
+            copySpan.textContent = 'Đã sao chép!';
+            setTimeout(() => { copySpan.textContent = orig;
+              btn.classList.remove('is-copied'); }, 2000);
+          } else if (btn.classList.contains('footer-ip-btn')) {
+            const orig = btn.textContent;
+            btn.textContent = '✓ Đã chép';
+            setTimeout(() => { btn.textContent = orig; }, 2000);
+          } else if (btn.classList.contains('nav-cta')) {
+            const orig = btn.textContent;
+            btn.textContent = '✓ play.valorant.com';
+            setTimeout(() => { btn.textContent = orig; }, 2000);
+          }
+        });
+      });
+
+      let baseCount = 1847392;
+
+      function updatePlayerCount() {
+        const variation = Math.floor(Math.random() * 23000) - 11500;
+        baseCount = Math.max(1800000, Math.min(1900000, baseCount + variation));
+        document.querySelectorAll('.player-count').forEach(el => {
+          el.textContent = baseCount.toLocaleString('vi-VN');
+        });
+      }
+      setInterval(updatePlayerCount, 5000);
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          if (hasScrollTrigger) ScrollTrigger.refresh();
+        }, 200);
+      });
+
+    })();
+  </script>
 </body>
-
 </html>
-```
